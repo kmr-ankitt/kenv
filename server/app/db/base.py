@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, create_engine
+from sqlmodel import SQLModel, create_engine, Session
 from app.models import user, access_log, secret
 
 sqlite_file_name = "database.db"
@@ -9,3 +9,7 @@ engine = create_engine(sqlite_url, connect_args=connect_args)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
+
+def get_session():
+    with Session(engine) as session:
+        yield session
