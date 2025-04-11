@@ -84,6 +84,7 @@ async def get_all_secrets(
         session.rollback()
         raise HTTPException(status_code=500, detail=f"Error fetching secrets: {str(e)}")
 
+
 @router.get("/{secret_id}")
 async def get_secret_by_id(
     secret_id: int,
@@ -109,5 +110,30 @@ async def get_secret_by_id(
 
     except Exception as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail=f"Error fetching secret: {str(e)}" 
-)
+        raise HTTPException(status_code=500, detail=f"Error fetching secret: {str(e)}")
+
+
+@router.delete("/{secret_id}")
+async def delete_secret(
+    secret_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        secret = session.exec(
+            select(SecretModel).where(
+                SecretModel.id == secret_id, SecretModel.owner_id == current_user.id
+            )
+        ).first()
+
+        if not secret:
+            raise HTTPException(status_code=404, detail="Secret not found")
+
+        session.delete(secret)
+        session.commit()
+
+        return {"message": "Secret deleted successfully"}
+
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Error deleting secret: {str(e)}")
