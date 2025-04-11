@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from app.utils.security import hash_password, verify_password
 from datetime import datetime
 from app.models.user import User
+from app.utils.auth import create_access_token
+from datetime import timedelta 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -40,7 +42,18 @@ async def register_user(
         session.commit()
         session.refresh(new_user)
 
-        return {"status": "success", "message": "User registered successfully"}
+        # 🔐 Create JWT token after successful registration
+        token = create_access_token(
+            data={"sub": new_user.username}, expires_delta=timedelta(days=1)
+        )
+
+        return {
+            "status": "success",
+            "message": "User registered successfully",
+            "access_token": token,
+            "token_type": "bearer",
+        }
+
     except HTTPException as http_exc:
         raise http_exc
     except Exception as e:

@@ -4,6 +4,8 @@ from app.db.base import get_session
 from app.models.user import User
 from app.utils.security import verify_password
 from pydantic import BaseModel
+from app.utils.auth import create_access_token
+from datetime import timedelta
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -21,15 +23,19 @@ async def login_user(*, session: Session = Depends(get_session), request: LoginR
             select(User).where(User.username == request.username)
         ).first()
 
-        if not user:
+        if not user or not verify_password(request.password, user.password):
             raise HTTPException(status_code=400, detail="Invalid username or password")
 
-        # Verify the password
-        if not verify_password(request.password, user.password):
-            raise HTTPException(status_code=400, detail="Invalid username or password")
+        token = create_access_token(
+            data={"sub": user.username}, expires_delta=timedelta(days=1)
+        )
 
-        session.commit()
-        return {"status": "success", "message": "Login successful"}
+        return {
+            "status": "success",
+            "access_token": token,
+            "token_type": "bearer",
+            "message": "Login successful",
+        }
 
     except HTTPException as http_exc:
         raise http_exc
