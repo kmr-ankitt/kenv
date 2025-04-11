@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.db import base
 from app.routers.auth import routers as auth_routers
+from app.routers.secret import router as secret_router
 
 
 @asynccontextmanager
@@ -12,10 +13,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# Register all auth routers
+# Register all auth and secret routers
 for router in auth_routers:
     app.include_router(router)
-
+app.include_router(secret_router)
 
 @app.get("/")
 async def root():

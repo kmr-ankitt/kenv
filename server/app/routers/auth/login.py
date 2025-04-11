@@ -6,24 +6,23 @@ from app.utils.security import verify_password
 from pydantic import BaseModel
 from app.utils.auth import create_access_token
 from datetime import timedelta
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-
 @router.post("/login")
-async def login_user(*, session: Session = Depends(get_session), request: LoginRequest):
+async def login_user(
+    form_data: OAuth2PasswordRequestForm = Depends(), 
+    session: Session = Depends(get_session)
+):
     try:
         # Check if the user exists
         user = session.exec(
-            select(User).where(User.username == request.username)
+            select(User).where(User.username == form_data.username)
         ).first()
 
-        if not user or not verify_password(request.password, user.password):
+        if not user or not verify_password(form_data.password, user.password):
             raise HTTPException(status_code=400, detail="Invalid username or password")
 
         token = create_access_token(
