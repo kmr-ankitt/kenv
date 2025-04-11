@@ -7,6 +7,7 @@ from app.utils.auth import get_current_user
 from app.models.user import User
 from app.models.secret import Secret as SecretModel
 from app.utils.security import encrypt_secret, decrypt_secret
+from app.models.access_log import AccessLog
 
 router = APIRouter(prefix="/secret", tags=["secret"])
 
@@ -39,6 +40,16 @@ async def create_secret(
         session.add(new_secret)
         session.commit()
         session.refresh(new_secret)
+
+        new_access_log = AccessLog(
+            user_id=current_user.id,
+            secret_id=new_secret.id,
+            action="created",
+            timestamp=datetime.now(),
+        )
+
+        session.add(new_access_log)
+        session.commit()
 
     except Exception as e:
         session.rollback()
@@ -90,6 +101,18 @@ async def get_secret_by_id(
         if not secret:
             raise HTTPException(status_code=404, detail="Secret not found")
 
+        set_access_log = AccessLog(
+            user_id=current_user.id,
+            secret_id=secret_id,
+            action="retrived",
+            timestamp=datetime.now(),
+        )
+
+        session.add(set_access_log)
+        session.commit()
+        session.refresh(set_access_log)
+
+
         return {
             "id": secret.id,
             "name": secret.name,
@@ -115,11 +138,23 @@ async def delete_secret(
             )
         ).first()
 
+
         if not secret:
             raise HTTPException(status_code=404, detail="Secret not found")
 
         session.delete(secret)
         session.commit()
+
+        set_access_log = AccessLog(
+            user_id=current_user.id,
+            secret_id=secret_id,
+            action="Deleted",
+            timestamp=datetime.now(),
+        )
+
+        session.add(set_access_log)
+        session.commit()
+        session.refresh(set_access_log)
 
         return {"message": "Secret deleted successfully"}
 
