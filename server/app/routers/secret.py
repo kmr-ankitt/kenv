@@ -64,7 +64,6 @@ async def get_all_secrets(
     current_user: User = Depends(get_current_user),
 ):
     try:
-        # Fetch all secrets for the current user
         secrets = session.exec(
             select(SecretModel).where(SecretModel.owner_id == current_user.id)
         ).all()
@@ -74,7 +73,7 @@ async def get_all_secrets(
                 {
                     "id": secret.id,
                     "name": secret.name,
-                    "value": decrypt_secret(secret.value),
+                    "value": secret.name + "(hidden)",
                     "expires_at": secret.expires_at,
                 }
                 for secret in secrets
@@ -84,3 +83,31 @@ async def get_all_secrets(
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=f"Error fetching secrets: {str(e)}")
+
+@router.get("/{secret_id}")
+async def get_secret_by_id(
+    secret_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        secret = session.exec(
+            select(SecretModel).where(
+                SecretModel.id == secret_id, SecretModel.owner_id == current_user.id
+            )
+        ).first()
+
+        if not secret:
+            raise HTTPException(status_code=404, detail="Secret not found")
+
+        return {
+            "id": secret.id,
+            "name": secret.name,
+            "value": decrypt_secret(secret.value),
+            "expires_at": secret.expires_at,
+        }
+
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Error fetching secret: {str(e)}" 
+)
