@@ -14,7 +14,6 @@ router = APIRouter(prefix="/secret", tags=["secret"])
 class Secret(BaseModel):
     name: str
     value: str
-    created_at: datetime
     expires_at: datetime
 
 
@@ -42,9 +41,9 @@ async def create_secret(
             owner_id=curr_user.id,
             name=request.name,
             value=encrypted_value,
-            created_at=request.created_at,
             expires_at=request.expires_at,
         )
+        print(new_secret)
 
         session.add(new_secret)
         session.commit()
