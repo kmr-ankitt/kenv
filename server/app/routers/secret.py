@@ -25,32 +25,21 @@ async def create_secret(
     current_user: User = Depends(get_current_user),
 ):
     try:
-        # Find the current user by username
-        curr_user = session.exec(
-            select(User).where(User.username == current_user.username)
-        ).first()
-
-        if not curr_user:
-            raise HTTPException(status_code=404, detail="User not found")
-
         # Encryption of secret value
         encrypted_value = encrypt_secret(request.value)
 
         # Create a new secret
         new_secret = SecretModel(
-            owner_id=curr_user.id,
+            owner_id=current_user.id,
             name=request.name,
             value=encrypted_value,
             expires_at=request.expires_at,
         )
-        print(new_secret)
 
         session.add(new_secret)
         session.commit()
         session.refresh(new_secret)
 
-    except HTTPException as http_exc:
-        raise http_exc
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail=f"Secret creation failed: {str(e)}")
