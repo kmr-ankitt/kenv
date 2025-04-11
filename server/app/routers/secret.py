@@ -56,3 +56,31 @@ async def create_secret(
         raise HTTPException(status_code=500, detail=f"Secret creation failed: {str(e)}")
 
     return {"message": "Secret created successfully", "secret": new_secret.name}
+
+
+@router.get("/all")
+async def get_all_secrets(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        # Fetch all secrets for the current user
+        secrets = session.exec(
+            select(SecretModel).where(SecretModel.owner_id == current_user.id)
+        ).all()
+
+        return {
+            "secrets": [
+                {
+                    "id": secret.id,
+                    "name": secret.name,
+                    "value": decrypt_secret(secret.value),
+                    "expires_at": secret.expires_at,
+                }
+                for secret in secrets
+            ]
+        }
+
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=f"Error fetching secrets: {str(e)}")
