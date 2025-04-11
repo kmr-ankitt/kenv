@@ -8,4 +8,6 @@ dependencies = [
   "fastapi[standard]==0.115.12",
   "pydantic==2.11.3",
   "sqlmodel==0.0.24",
+  "bcrypt==4.0.1",
+  "passlib==1.7.4",
 ]
