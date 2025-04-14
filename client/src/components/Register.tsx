@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { AnimatedButton } from "@/components/AnimatedButton";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const registerSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters long" }),
@@ -13,6 +15,9 @@ const registerSchema = z.object({
 })
 
 export default function Register() {
+  const [errorText, setErrorText] = useState("");
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -22,13 +27,29 @@ export default function Register() {
   })
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-    console.log(data);
+    try {
+      const res = await fetch("http://localhost:8000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      const result = await res.json();
+      if (!res.ok) {
+        setErrorText(result.detail);
+      }
+      document.cookie = `access_token=${result.access_token}; path=/; secure`;
+      router.push("/home");
+    } catch (error) {
+      console.log("Error:", error);
+    }
   }
 
   return (
     <div className="flex flex-col items-center justify-center p-2 min-h-full">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7 w-full p-5 md:w-1/4 border border-purple-200/25 rounded-lg">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-full p-5 md:w-1/4 border border-purple-200/25 rounded-lg">
           <h1 className="text-2xl text-zinc-200 font-bold">Register to Kenv</h1>
           <FormField
             control={form.control}
@@ -37,7 +58,7 @@ export default function Register() {
               <FormItem className="text-zinc-200">
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="Username" {...field} className="border border-purple-200/20"/>
+                  <Input placeholder="Username" {...field} className="border border-purple-200/20" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -50,12 +71,17 @@ export default function Register() {
               <FormItem className="text-zinc-200">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Password" {...field} className="border border-purple-200/20"/>
+                  <Input type="password" placeholder="Password" {...field} className="border border-purple-200/20" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          {errorText && (
+            <div className="text-red-500 text-sm">
+              {errorText}
+            </div>
+          )}
           <AnimatedButton value="Register" />
         </form>
       </Form>
