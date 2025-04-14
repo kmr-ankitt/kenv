@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { AnimatedButton } from "@/components/AnimatedButton";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters long" }),
@@ -13,6 +14,8 @@ const loginSchema = z.object({
 })
 
 export default function Login() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -22,7 +25,33 @@ export default function Login() {
   })
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
-    console.log(data);
+    try {
+      const formData = new URLSearchParams();
+      formData.append("grant_type", "password");
+      formData.append("username", data.username);
+      formData.append("password", data.password);
+      formData.append("scope", "");
+      formData.append("client_id", "");
+      formData.append("client_secret", "");
+
+      const res = await fetch("http://localhost:8000/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formData.toString(),
+      });
+
+      if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const result = await res.json();
+      document.cookie = `access_token=${result.access_token}; path=/; secure`;
+      router.push("/home");
+    } catch (error) {
+      console.error("Error:", error);
+    }
   }
 
   return (
