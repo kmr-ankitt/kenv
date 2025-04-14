@@ -56,7 +56,7 @@ export default function Register() {
               </FormItem>
             )}
           />
-          <AnimatedButton value="Submit" />
+          <AnimatedButton value="Register" />
         </form>
       </Form>
     </div>

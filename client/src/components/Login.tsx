@@ -56,7 +56,7 @@ export default function Login() {
               </FormItem>
             )}
           />
-          <AnimatedButton value="Submit" />
+          <AnimatedButton value="Login" />
         </form>
       </Form>
     </div>
