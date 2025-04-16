@@ -1,5 +1,6 @@
 "use client"
 
+import EnvTabs from "@/components/EnvTabs"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -10,7 +11,7 @@ export default function Home() {
   })
   return (
     <div className="h-screen w-full text-zinc-200">
-      Home
+      <EnvTabs />
     </div>
   )
 }
