@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CreateSecret from "./secrets/CreateSecret"
+import Secrects from "./secrets/Secrects"
 
 export default function EnvTabs() {
   return (
@@ -13,7 +14,9 @@ export default function EnvTabs() {
         <TabsContent value="create-secret" className="w-full">
           <CreateSecret />
         </TabsContent>
-        <TabsContent value="retrieve-secret">Retrieve your secrets here.</TabsContent>
+        <TabsContent value="retrieve-secret">
+          <Secrects />
+        </TabsContent>
         <TabsContent value="manage-secret">Manage your secrets here.</TabsContent>
       </Tabs>
     </div>
