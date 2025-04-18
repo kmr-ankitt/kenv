@@ -31,7 +31,44 @@ export default function CreateSecret() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data)
+    const transformedData = {
+      name: data.secretName,
+      value: data.secretValue,
+      expires_at: data.expiryDate ? new Date(data.expiryDate).toISOString() : null,
+    };
+
+    console.log(transformedData);
+
+    try {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("access_token="))
+        ?.split("=")[1];
+
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+
+      const res = await fetch("http://localhost:8000/secret", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+
+        body: JSON.stringify(transformedData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Failed to create secret");
+      }
+
+      const responseData = await res.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error("Error creating secret:", error);
+    }
   };
 
   return (
