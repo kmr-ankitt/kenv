@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { AnimatedButton } from "../AnimatedButton";
+import { DatePicker } from "../DatePicker";
 
 export default function CreateSecret() {
   const formSchema = z.object({
@@ -72,18 +73,7 @@ export default function CreateSecret() {
               <FormItem>
                 <FormLabel>Expiry Date</FormLabel>
                 <FormControl>
-                  <Input
-                    type="date"
-                    value={field.value ? field.value.toISOString().split("T")[0] : ""}
-                    onChange={(e) => {
-                      const selectedDate = e.target.value ? new Date(e.target.value) : undefined;
-                      field.onChange(selectedDate);
-                    }}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                    min={new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]} // Minimum date is 10 days from now
-                  />
+                  <DatePicker {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
