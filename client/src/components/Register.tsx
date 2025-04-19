@@ -37,12 +37,18 @@ export default function Register() {
       })
       const result = await res.json();
       if (!res.ok) {
-        setErrorText(result.detail);
+        if (result.detail === "Username already exists") {
+          setErrorText("This username is already taken. Please choose another one.");
+        } else {
+          setErrorText(result.detail);
+        }
+        return;
       }
       document.cookie = `access_token=${result.access_token}; path=/; secure`;
       router.push("/home");
     } catch (error) {
       console.log("Error:", error);
+      setErrorText("An unexpected error occurred. Please try again later.");
     }
   }
 
