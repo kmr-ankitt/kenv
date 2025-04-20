@@ -1,5 +1,6 @@
 "use client"
 
+import { EyeClosed } from "lucide-react";
 import { useEffect, useState } from "react"
 
 type Secret = {
@@ -47,20 +48,26 @@ export default function Secrects() {
   console.log(secrets);
 
   return (
-    <div className="flex flex-wrap gap-5 justify-center p-5">
+    <div className="flex flex-col items-center gap-2">
       {secrets.map((secret) => (
-      <div
-        key={secret.id}
-        className="border border-gray-300 rounded-lg shadow-md p-5 w-72 bg-white transform transition-transform duration-200 hover:scale-105"
-      >
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">{secret.name}</h3>
-        <p className="text-gray-600 mb-1">
-        <strong>Value:</strong> {secret.value}
-        </p>
-        <p className="text-gray-600">
-        <strong>Expires At:</strong> {new Date(secret.expires_at).toLocaleString()}
-        </p>
-      </div>
+        <div
+          key={secret.id}
+          className="border border-gray-300 rounded-lg shadow-lg p-4 bg-purple-50 w-full"
+        >
+          <h3 className="text-lg font-bold text-purple-700 mb-2">{secret.name}</h3>
+          <p className="text-gray-700 mb-1 gap-0.5 flex items-center">
+            <strong>Key:</strong>
+            {secret.value}
+            <span className="ml-1">
+              <button className="flex items-center" >
+                <EyeClosed size={16} />
+              </button>
+            </span>
+          </p>
+          <p className="text-gray-500 text-xs">
+            <strong>Expires at:</strong> {new Date(secret.expires_at).toLocaleDateString()}
+          </p>
+        </div>
       ))}
     </div>
   )
