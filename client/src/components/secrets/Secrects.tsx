@@ -1,6 +1,6 @@
 "use client"
 
-import { getSecret, getSecretbyId } from "@/utils/api";
+import { deleteSecret, getSecret, getSecretbyId } from "@/utils/api";
 import { getToken } from "@/utils/token";
 import { Trash, Eye, EyeClosed } from "lucide-react";
 import { useEffect, useState } from "react"
@@ -50,6 +50,17 @@ export default function Secrects() {
     }
   };
 
+  const deleteCurrentSecret = async (id: number) => {
+    try {
+      await deleteSecret(id);
+      setSecrets((prevSecrets) =>
+        prevSecrets.filter((secret) => secret.id !== id)
+      );
+    } catch (error) {
+      console.error("Failed to delete secret:", error);
+    }
+  };
+
   console.log(secrets);
 
   return (
@@ -61,7 +72,7 @@ export default function Secrects() {
         >
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-bold text-purple-700">{secret.name}</h3>
-            <button onClick={() => console.log("Delete secret" + secret.id)}>
+            <button onClick={() => deleteCurrentSecret(secret.id)}>
               <Trash size={16} className="text-red-500" />
             </button>
           </div>
