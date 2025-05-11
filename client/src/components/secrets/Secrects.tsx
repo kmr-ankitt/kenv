@@ -27,7 +27,7 @@ export default function Secrects() {
         const secret = await getSecret();
         // Sort secrets by `expires_at` in descending order (latest first)
         const sortedSecrets = secret.secrets.sort(
-          (a: Secret, b: Secret) => new Date(b.expires_at).getTime() - new Date(a.expires_at).getTime()
+          (a: Secret, b: Secret) => b.id - a.id
         );
         setSecrets(sortedSecrets);
       } catch (error) {
