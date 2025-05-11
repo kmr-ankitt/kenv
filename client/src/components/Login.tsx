@@ -7,6 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { AnimatedButton } from "@/components/AnimatedButton";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { getToken } from "@/utils/token";
 
 const loginSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters long" }),
@@ -24,6 +26,12 @@ export default function Login() {
     },
   })
 
+  useEffect(() => {
+    const token = getToken();
+    if (token)
+      router.replace("/home");
+  })
+
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       const formData = new URLSearchParams();
@@ -35,15 +43,15 @@ export default function Login() {
       formData.append("client_secret", "");
 
       const res = await fetch("http://localhost:8000/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formData.toString(),
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
       });
 
       if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
 
       const result = await res.json();
@@ -66,7 +74,7 @@ export default function Login() {
               <FormItem className="text-zinc-200">
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="Username" {...field} className="border border-purple-200/20"/>
+                  <Input placeholder="Username" {...field} className="border border-purple-200/20" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -79,7 +87,7 @@ export default function Login() {
               <FormItem className="text-zinc-200">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Password" {...field} className="border border-purple-200/20"/>
+                  <Input type="password" placeholder="Password" {...field} className="border border-purple-200/20" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

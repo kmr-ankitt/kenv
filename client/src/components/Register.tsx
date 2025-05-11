@@ -7,7 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { AnimatedButton } from "@/components/AnimatedButton";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getToken } from "@/utils/token";
 
 const registerSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters long" }),
@@ -24,6 +25,12 @@ export default function Register() {
       username: "",
       password: ""
     },
+  })
+
+  useEffect(() => {
+    const token = getToken();
+    if (token)
+      router.replace("/home");
   })
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
