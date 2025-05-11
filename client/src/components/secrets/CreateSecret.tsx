@@ -34,7 +34,9 @@ export default function CreateSecret() {
     const transformedData = {
       name: data.secretName,
       value: data.secretValue,
-      expires_at: data.expiryDate ? new Date(data.expiryDate).toISOString() : null,
+      expires_at: data.expiryDate 
+        ? new Date(data.expiryDate).toISOString() 
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     };
 
     console.log(transformedData);
@@ -84,7 +86,7 @@ export default function CreateSecret() {
                   Secret Name<span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="MY SECRET" {...field} />
+                  <Input placeholder="secret name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +99,7 @@ export default function CreateSecret() {
               <FormItem>
                 <FormLabel>Secret Value<span className="text-red-500" >*</span></FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="MY PASSWORD" {...field} />
+                  <Input type="password" placeholder="your secret" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
