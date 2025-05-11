@@ -44,6 +44,7 @@ async def create_secret(
         new_access_log = AccessLog(
             user_id=current_user.id,
             secret_id=new_secret.id,
+            secret_name=new_secret.name,
             action="created",
             timestamp=datetime.now(),
         )
@@ -104,6 +105,7 @@ async def get_secret_by_id(
         set_access_log = AccessLog(
             user_id=current_user.id,
             secret_id=secret_id,
+            secret_name=secret.name,
             action="retrived",
             timestamp=datetime.now(),
         )
@@ -148,6 +150,7 @@ async def delete_secret(
         set_access_log = AccessLog(
             user_id=current_user.id,
             secret_id=secret_id,
+            secret_name=secret.name,
             action="Deleted",
             timestamp=datetime.now(),
         )

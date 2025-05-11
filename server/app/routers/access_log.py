@@ -13,11 +13,15 @@ async def get_access_log(
 ):
     try:
         logs = session.exec(select(AccessLog)).all()
-        secrets = {
-            secret.id: secret.name for secret in session.exec(select(Secret)).all()
-        }
         merged_logs = [
-            {"secret_name": secrets.get(log.secret_id), **log.model_dump()}
+            {
+                "id": log.id,
+                "user_id": log.user_id,
+                "secret_id": log.secret_id,
+                "secret_name": log.secret_name or "[Deleted]",
+                "action": log.action,
+                "timestamp": log.timestamp.isoformat(),
+            }
             for log in logs
         ]
 
