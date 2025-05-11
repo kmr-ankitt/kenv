@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AnimatedButton } from "@/components/AnimatedButton";
+import  AnimatedButton  from "@/components/AnimatedButton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getToken } from "@/utils/token";

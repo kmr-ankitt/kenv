@@ -2,7 +2,7 @@
 
 import { getAccessLog } from "@/utils/api"
 import { useEffect, useState } from "react"
-import { AnimatedButton } from "../AnimatedButton";
+import  AnimatedButton  from "../AnimatedButton";
 
 type Log = {
   id: number;

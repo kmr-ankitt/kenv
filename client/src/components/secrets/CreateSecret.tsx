@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { AnimatedButton } from "../AnimatedButton";
+import  AnimatedButton  from "../AnimatedButton";
 import { DatePicker } from "../DatePicker";
 
 export default function CreateSecret() {

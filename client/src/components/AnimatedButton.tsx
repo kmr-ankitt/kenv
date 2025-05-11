@@ -1,8 +1,18 @@
-export function AnimatedButton({ value, onClick, disabled }: { value: string; onClick?: () => void; disabled?: boolean }) {
+export default function AnimatedButton({
+  value,
+  onClick,
+  disabled,
+  className = "",
+}: {
+  value: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}) {
   return (
     <button
       onClick={onClick}
-      className={`group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md bg-purple-950 px-6 font-medium text-zinc-200 duration-500`}
+      className={`group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md bg-purple-950 px-6 font-medium text-zinc-200 duration-500 ${className}`}
       disabled={disabled}
     >
       <div className="translate-x-0 opacity-100 transition group-hover:translate-x-[-150%] group-hover:opacity-0">

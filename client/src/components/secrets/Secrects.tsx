@@ -4,7 +4,7 @@ import { deleteSecret, getSecret, getSecretbyId } from "@/utils/api";
 import { getToken } from "@/utils/token";
 import { Trash, Eye, EyeClosed } from "lucide-react";
 import { useEffect, useState } from "react"
-import { AnimatedButton } from "../AnimatedButton";
+import  AnimatedButton  from "../AnimatedButton";
 
 type Secret = {
   id: number;
