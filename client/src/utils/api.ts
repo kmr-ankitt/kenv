@@ -61,3 +61,21 @@ export const deleteSecret = async (id: number) => {
     console.error("Error deleting secret:", error);
   }
 }
+
+export const getAccessLog = async () => {
+  try {
+    const res = await fetch("http://localhost:8000/log", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch access log");
+    }
+    return res.json();
+  }
+  catch (error) {
+    console.error("Error fetching access log:", error);
+  }
+}
