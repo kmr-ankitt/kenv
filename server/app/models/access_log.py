@@ -3,6 +3,7 @@ from datetime import datetime
 
 class AccessLog(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
+    secret_name: str
     user_id: int = Field(foreign_key="user.id")
     secret_id: int = Field(foreign_key="secret.id")
     action: str 
