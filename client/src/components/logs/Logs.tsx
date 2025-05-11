@@ -20,7 +20,12 @@ export default function Logs() {
 
   const getLogs = async () => {
     const res = await getAccessLog();
-    setLogs(res);
+    if (res) {
+      const sortedLogs = res.sort(
+        (a: Log, b: Log) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+      setLogs(sortedLogs);
+    }
   };
 
   useEffect(() => {

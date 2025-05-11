@@ -4,6 +4,7 @@ import { deleteSecret, getSecret, getSecretbyId } from "@/utils/api";
 import { getToken } from "@/utils/token";
 import { Trash, Eye, EyeClosed } from "lucide-react";
 import { useEffect, useState } from "react"
+import { AnimatedButton } from "../AnimatedButton";
 
 type Secret = {
   id: number;
@@ -15,6 +16,8 @@ type Secret = {
 export default function Secrects() {
   const [secrets, setSecrets] = useState<Secret[]>([]);
   const [visibleSecretId, setVisibleSecretId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const logsPerPage = 5; // Number of logs per page
 
   const token = getToken();
 
@@ -22,7 +25,11 @@ export default function Secrects() {
     const fetchSecrets = async () => {
       try {
         const secret = await getSecret();
-        setSecrets(secret.secrets);
+        // Sort secrets by `expires_at` in descending order (latest first)
+        const sortedSecrets = secret.secrets.sort(
+          (a: Secret, b: Secret) => new Date(b.expires_at).getTime() - new Date(a.expires_at).getTime()
+        );
+        setSecrets(sortedSecrets);
       } catch (error) {
         console.error("Failed to fetch secrets:", error);
       }
@@ -63,9 +70,26 @@ export default function Secrects() {
 
   console.log(secrets);
 
+  const indexOfLastLog = currentPage * logsPerPage;
+  const indexOfFirstLog = indexOfLastLog - logsPerPage;
+  const currentLogs = secrets.slice(indexOfFirstLog, indexOfLastLog);
+
+  const totalPages = Math.ceil(secrets.length / logsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   return (
     <div className="flex flex-col items-center gap-2">
-      {secrets.map((secret) => (
+      {currentLogs.map((secret) => (
         <div
           key={secret.id}
           className="border border-gray-300 rounded-lg shadow-lg p-4 bg-purple-50 w-full"
@@ -108,6 +132,21 @@ export default function Secrects() {
           </p>
         </div>
       ))}
+      <div className="flex justify-between items-center w-full max-w-md">
+        <AnimatedButton 
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          value="<<"
+        />
+        <span className="text-gray-700">
+          Page {currentPage} of {totalPages}
+        </span>
+        <AnimatedButton
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          value=">>"
+        />
+      </div>
     </div>
   );
 }
