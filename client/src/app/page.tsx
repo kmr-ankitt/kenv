@@ -1,22 +1,21 @@
 "use client"
-import { AnimatedButton } from "@/components/AnimatedButton";
-import Link from "next/link";
+import AnimatedButton from "@/components/AnimatedButton";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
-  useEffect(()=>{
+  useEffect(() => {
     if (document.cookie.includes("access_token")) router.push("/home")
   })
   return (
-    <div className="h-screen w-full flex gap-5 items-center justify-center">
-      <Link href="/login">
-        <AnimatedButton value="Login" />
-      </Link>
-      <Link href="/register">
-        <AnimatedButton value="Register" />
-      </Link>
+    <div className="h-screen w-full flex flex-col items-center justify-center gap-2">
+      <h1 className="text-4xl font-bold text-zinc-200">Welcome to <span className="text-purple-300">Kenv</span></h1>
+      <p className="text-lg text-gray-600 ">Organise your envs.</p>
+      <AnimatedButton
+        value="Get Started"
+        onClick={() => router.push("/login")}
+      />
     </div>
   );
 }
