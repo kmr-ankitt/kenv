@@ -55,7 +55,7 @@ export default function Login() {
       }
 
       const result = await res.json();
-      document.cookie = `access_token=${result.access_token}; path=/; secure`;
+      document.cookie = `access_token=${result.access_token}; path=/;`;
       router.push("/home");
     } catch (error) {
       console.error("Error:", error);

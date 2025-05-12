@@ -51,7 +51,7 @@ export default function Register() {
         }
         return;
       }
-      document.cookie = `access_token=${result.access_token}; path=/; secure`;
+      document.cookie = `access_token=${result.access_token}; path=/;`;
       router.push("/home");
     } catch (error) {
       console.log("Error:", error);
